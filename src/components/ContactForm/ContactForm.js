@@ -1,5 +1,6 @@
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import Inputmask from 'inputmask';
 
 import {
   BtnAddContact,
@@ -8,6 +9,14 @@ import {
   StyledField,
   FieldName,
 } from './ContactForm.styled';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { getContacts } from 'redux/selectors';
+import { addContact } from 'redux/contactsSlice';
+import Notiflix from 'notiflix';
+import { useEffect } from 'react';
+
+
 
 const contactSchema = Yup.object().shape({
   name: Yup.string()
@@ -28,16 +37,47 @@ const initialValues = {
   number: '',
 };
 
-export const ContactForm = ({ onSubmit }) => {
-  const handlerSubmit = (values, actions) => {
-    onSubmit(values, actions);
+export const ContactForm = () => {
+  useEffect(() => {
+    const inputs = document.querySelector('input[type=tel]');
+    let im = new Inputmask('+38 (099) 999-99-99');
+    im.mask(inputs);
+  }, []);
+
+  const dispatch = useDispatch();
+  const contacts = useSelector(getContacts);
+
+  const handlerAddContact = (fieldValue, form) => {
+    const contactCheck = contacts.find(contact => {
+      return (
+        contact.name.toLocaleLowerCase() ===
+          fieldValue.name.toLocaleLowerCase() ||
+        contact.number === fieldValue.number
+      );
+    });
+    console.log(contactCheck);
+
+    if (contactCheck === undefined) {
+      console.log('++++', fieldValue);
+      dispatch(addContact(fieldValue));
+      form.resetForm();
+      Notiflix.Notify.success(`${fieldValue.name}  add to contacts`);
+    } else if (contactCheck.name === fieldValue.name) {
+      return Notiflix.Notify.warning(
+        `${fieldValue.name}  is already in contacts`
+      );
+    } else if (contactCheck.number === fieldValue.number) {
+      return Notiflix.Notify.warning(
+        `The number ${fieldValue.number}  is already in contacts ${contactCheck.name}`
+      );
+    }
   };
 
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={contactSchema}
-      onSubmit={handlerSubmit}
+      onSubmit={handlerAddContact}
     >
       <StyledForm>
         <label>
