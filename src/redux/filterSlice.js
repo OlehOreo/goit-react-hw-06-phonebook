@@ -5,7 +5,6 @@ const filterSlice = createSlice({
   initialState: '',
   reducers: {
     onSearchContact(state, action) {
-      console.log('33333', state);
       return action.payload;
     },
   },

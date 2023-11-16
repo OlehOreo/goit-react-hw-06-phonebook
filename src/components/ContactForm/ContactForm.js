@@ -16,8 +16,6 @@ import { addContact } from 'redux/contactsSlice';
 import Notiflix from 'notiflix';
 import { useEffect } from 'react';
 
-
-
 const contactSchema = Yup.object().shape({
   name: Yup.string()
     .lowercase()
@@ -55,10 +53,8 @@ export const ContactForm = () => {
         contact.number === fieldValue.number
       );
     });
-    console.log(contactCheck);
 
     if (contactCheck === undefined) {
-      console.log('++++', fieldValue);
       dispatch(addContact(fieldValue));
       form.resetForm();
       Notiflix.Notify.success(`${fieldValue.name}  add to contacts`);

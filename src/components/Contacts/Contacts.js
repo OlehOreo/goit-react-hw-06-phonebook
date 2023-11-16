@@ -6,7 +6,6 @@ import { getContacts, getSearchResults } from 'redux/selectors';
 export const Contacts = () => {
   const contacts = useSelector(getContacts);
   const filter = useSelector(getSearchResults);
-  console.log('&&&&', contacts);
   const filteredContacts = contacts.filter(({ name, number }) => {
     if (filter.length > 0) {
       return (
@@ -14,6 +13,7 @@ export const Contacts = () => {
         number.replace(/\D/g, '').includes(filter)
       );
     }
+
     return contacts;
   });
 
